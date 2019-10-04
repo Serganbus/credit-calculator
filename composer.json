@@ -1,0 +1,21 @@
+{
+    "name": "serganbus/credits",
+    "description": "Алгоритмы расчета кредитов",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivanov Sergey",
+            "email": "sivanovkz@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Credits\\": "src/"
+        }
+    },
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^8.3"
+    }
+}
