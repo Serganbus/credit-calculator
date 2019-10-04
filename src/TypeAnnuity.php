@@ -31,7 +31,6 @@ class TypeAnnuity extends AbstractCreditType
         for($i = 1; $i <= $repaymentsCount; $i++) {
             $currentRepaymentDate = $this->addDurationToDate($durationType, $i, $initialDate);
             $interval = $currentRepaymentDate->diff($previousRepaymentDate);
-            $daysDiffInRepayment = $interval->days;
 
             // Выплачено процентов
             $percentsRepayed = round($remainingAmount * $percents / ($fullPeriodsCount * 10000));
@@ -44,13 +43,11 @@ class TypeAnnuity extends AbstractCreditType
                 $unexpectedPaymentDate = $unexpectedPayment->getDate();
                 $unexpectedAmount = $unexpectedPayment->getAmount();
                 $interval = $unexpectedPaymentDate->diff($prevUnexpectedRepaymentDate);
-                $daysDiff = $interval->days;
 
                 $remainingAmount -= $unexpectedAmount;
                 if ($recalcType === UnexpectedPayment::LESS_PAYMENT) {
                     $repaymentRounded = $this->calcPaymentAmount($remainingAmount, $percents, $repaymentsCount - $i + 1, $fullPeriodsCount);
                     $percentsRepayed  = round($remainingAmount * $percents / ($fullPeriodsCount * 10000));
-//                    $percentsRepayed  = floor($percentsRepayed * ($daysDiffInRepayment - $daysDiff) / $daysDiffInRepayment);
                 }
                 if ($recalcType === UnexpectedPayment::LESS_LOAN_PERIOD) {
                     //TODO:
