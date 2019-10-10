@@ -52,7 +52,7 @@ class TypeAnnuity extends AbstractCreditType
                 if ($recalcType === UnexpectedPayment::LESS_LOAN_PERIOD) {
                     $percentsInPeriod = $percents / ($fullPeriodsCount * 10000);
                     $log = $percentsInPeriod / ($repaymentRounded / $remainingAmount - $percentsInPeriod) + 1;
-                    $newRepaymentsCount = (int)round(log($log, 1 + $percentsInPeriod) + 0.5);
+                    $newRepaymentsCount = (int)round(log($log, 1 + $percentsInPeriod));
                     $repaymentsCount = $i + $newRepaymentsCount - 1;
                 }
 

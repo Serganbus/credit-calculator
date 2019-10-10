@@ -38,7 +38,7 @@ class TypeDifferentialTest extends TestCase
             ['date' => '31.10.2019', 'payment' => 0,       'percents' => 0,      'body' => 0,       'balance' => 100000000],
             ['date' => '30.11.2019', 'payment' => 9147032, 'percents' => 813699, 'body' => 8333333, 'balance' => 91666667],
             ['date' => '31.12.2019', 'payment' => 9104086, 'percents' => 770753, 'body' => 8333333, 'balance' => 83333334],
-            ['date' => '31.01.2020', 'payment' => 9032103, 'percents' => 698770, 'body' => 8333333, 'balance' => 75000001],
+            ['date' => '31.01.2020', 'payment' => 9034018, 'percents' => 700685, 'body' => 8333333, 'balance' => 75000001],
             ['date' => '29.02.2020', 'payment' => 8921653, 'percents' => 588320, 'body' => 8333333, 'balance' => 66666668],
             ['date' => '31.03.2020', 'payment' => 8892349, 'percents' => 559016, 'body' => 8333333, 'balance' => 58333335],
             ['date' => '30.04.2020', 'payment' => 8806694, 'percents' => 473361, 'body' => 8333333, 'balance' => 50000002],

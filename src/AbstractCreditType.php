@@ -112,8 +112,8 @@ abstract class AbstractCreditType
         $currDateStr = $currentDate->format('Y-m-d');
         foreach ($this->unexpectedPayments as $unexpectedPayment) {
             $paymentDateStr = $unexpectedPayment->getDate()->format('Y-m-d');
-            if ($paymentDateStr > $prevDateStr
-                && $paymentDateStr <= $currDateStr) {
+            if ($paymentDateStr >= $prevDateStr
+                && $paymentDateStr < $currDateStr) {
                 $payments[] = $unexpectedPayment;
             }
         }

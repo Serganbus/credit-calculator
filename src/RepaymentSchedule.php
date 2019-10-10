@@ -16,7 +16,7 @@ class RepaymentSchedule implements \Iterator, \Countable
     private $repayments;
 
     /** @var CreditParams */
-    private $creditParmas;
+    private $creditParams;
 
     /** @var int */
     private $creditTotalCost;
@@ -34,7 +34,7 @@ class RepaymentSchedule implements \Iterator, \Countable
 
         $this->position = 0;
         $this->repayments = $repayments;
-        $this->creditParmas = $params;
+        $this->creditParams = $params;
     }
 
     /**
@@ -126,7 +126,7 @@ class RepaymentSchedule implements \Iterator, \Countable
         $payments = [];
         $e = [];
         $q = [];
-        $creditDuration = $this->creditParmas->getDurationType();
+        $creditDuration = $this->creditParams->getDurationType();
         $daysInBasePeriod = CreditParams::$daysInPaymentPeriod[$creditDuration];
 
         /** @var \DateTime $initialDate */
