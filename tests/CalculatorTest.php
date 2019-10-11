@@ -19,7 +19,7 @@ class CalculatorTest extends TestCase
         // при аннуитетном графике погашений -
         // одинаковые суммы погашения, кроме последнего платежа.
         // Последний платеж обычно меньше ежемесячного платежа.
-        $annuityRepaymentSchedule = $calculator->calculate($params, Calculator::TYPE_ANNUITY);
+        $annuityRepaymentSchedule = $calculator->calculate($params, [], Calculator::TYPE_ANNUITY);
         $repaymentsCount = count($annuityRepaymentSchedule);
         while($annuityRepaymentSchedule->valid()) {
             $repaymentParams = $annuityRepaymentSchedule->current();
@@ -36,7 +36,7 @@ class CalculatorTest extends TestCase
 
         // при дифференциальном графике погашений -
         // одинаковые суммы погашения по телу кредита, кроме последнего платежа.
-        $differentialRepaymentSchedule = $calculator->calculate($params, Calculator::TYPE_DIFFERENTIAL);
+        $differentialRepaymentSchedule = $calculator->calculate($params, [], Calculator::TYPE_DIFFERENTIAL);
         $repaymentsCount = count($differentialRepaymentSchedule);
         while($differentialRepaymentSchedule->valid()) {
             $repaymentParams = $differentialRepaymentSchedule->current();
@@ -56,17 +56,14 @@ class CalculatorTest extends TestCase
         $calculator = new Calculator();
 
         $this->expectException(\InvalidArgumentException::class);
-        $calculator->calculate($params, 666);
+        $calculator->calculate($params, [], 666);
     }
 
     public function testCalculateException2()
     {
-        $params = new CreditParams(new \DateTime('2019-10-31 00:00:00'), 100000000, 990, 12, CreditParams::DURATION_MONTH);
-        $calculator = new Calculator([
+        $this->expectException(\InvalidArgumentException::class);
+        new Calculator([
             Calculator::TYPE_ANNUITY => '\Credits\NotFoundClass'
         ]);
-
-        $this->expectException(\LogicException::class);
-        $calculator->calculate($params, Calculator::TYPE_ANNUITY);
     }
 }

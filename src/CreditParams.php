@@ -11,14 +11,12 @@ use DateTime;
  */
 class CreditParams
 {
-    const DURATION_DAY = 0;
     const DURATION_WEEK = 1;
     const DURATION_TWO_WEEKS = 2;
     const DURATION_MONTH = 3;
     const DURATION_QUARTER = 4;
 
     public static $daysInPaymentPeriod = [
-        self::DURATION_DAY => 365,
         self::DURATION_WEEK => 7,
         self::DURATION_TWO_WEEKS => 14,
         self::DURATION_MONTH => 30,

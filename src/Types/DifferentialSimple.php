@@ -1,21 +1,26 @@
 <?php
 
-namespace Credits;
+namespace Credits\Types;
+
+use Credits\CreditParams;
+use Credits\RepaymentParams;
+use Credits\RepaymentSchedule;
+use Credits\UnexpectedPayment;
 
 /**
  * Расчет графика платежей при диффиренцированных платежах
  *
  * @author Sergey Ivanov <sivanovkz@gmail.com>
  */
-class TypeDifferential extends AbstractCreditType
+class DifferentialSimple implements Calculatable
 {
-    public function getRepaymentSchedule(): RepaymentSchedule
+    public function getRepaymentSchedule(CreditParams $params, array $unexpectedPayments): RepaymentSchedule
     {
-        $initialDate = $this->creditParams->getInitialDate();
-        $requestedSum = $this->creditParams->getRequestedSum();
-        $percents = $this->creditParams->getPercents();
-        $repaymentsCount = $this->creditParams->getRepaymentPeriodsCount();
-        $durationType = $this->creditParams->getDurationType();
+        $initialDate = $params->getInitialDate();
+        $requestedSum = $params->getRequestedSum();
+        $percents = $params->getPercents();
+        $repaymentsCount = $params->getRepaymentPeriodsCount();
+        $durationType = $params->getDurationType();
 
         $schedule = [
             new RepaymentParams($initialDate, 0, 0, 0, $requestedSum)
@@ -25,7 +30,7 @@ class TypeDifferential extends AbstractCreditType
         $previousRepaymentDate = clone $initialDate;
         $remainingAmount = $requestedSum;
         for($i = 1; $i <= $repaymentsCount; $i++) {
-            $currentRepaymentDate = $this->addDurationToDate($durationType, $i, $initialDate);
+            $currentRepaymentDate = \Credits\addDurationToDate($initialDate, $durationType, $i);
 
             $interval = $currentRepaymentDate->diff($previousRepaymentDate);
             $daysDiff = $interval->days;
@@ -36,7 +41,7 @@ class TypeDifferential extends AbstractCreditType
 
             // Платежи досрочного погашения, которые есть в периоде
             $prevUnexpectedRepaymentDate = clone $previousRepaymentDate;
-            $unexpectedPayments = $this->getUnexpectedPaymentsBetweenDates($currentRepaymentDate, $previousRepaymentDate);
+            $unexpectedPayments = \Credits\getUnexpectedPaymentsBetweenDates($currentRepaymentDate, $previousRepaymentDate, $unexpectedPayments);
             foreach ($unexpectedPayments as $unexpectedPayment) {
                 $recalcType = $unexpectedPayment->getType();
                 $unexpectedPaymentDate = $unexpectedPayment->getDate();
@@ -72,6 +77,6 @@ class TypeDifferential extends AbstractCreditType
             $schedule[] = new RepaymentParams($currentRepaymentDate, $currentRepayment, $percentsRepayed, $bodyRepayed, $remainingAmount);
         }
 
-        return new RepaymentSchedule($schedule, $this->creditParams);
+        return new RepaymentSchedule($schedule, $params);
     }
 }

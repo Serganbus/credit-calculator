@@ -1,38 +1,32 @@
 <?php
 
-namespace Credits;
+namespace Credits\Types;
 
 use PHPUnit\Framework\TestCase;
 use Credits\CreditParams;
 use Credits\RepaymentParams;
 
 /**
- * Description of TypeDifferentialTest
+ * Description of DifferentialSimpleTest
  *
  * @author Sergey Ivanov <sivanovkz@gmail.com>
  */
-class TypeDifferentialTest extends TestCase
+class DifferentialSimpleTest extends TestCase
 {
     /**
-     * @var TypeAnnuity
+     * @var DifferentialSimple
      */
     private $credit;
 
     public function setUp(): void
     {
-        $params = new CreditParams(new \DateTime('2019-10-31 00:00:00'), 100000000, 990, 12, CreditParams::DURATION_MONTH);
-        $this->credit = new TypeDifferential($params);
-    }
-
-    public function testGetCreditParams()
-    {
-        $params = $this->credit->getCreditParams();
-        $this->assertInstanceOf(CreditParams::class, $params);
+        $this->credit = new DifferentialSimple();
     }
 
     public function testGetRepaymentSchedule()
     {
-        $actualRepayments = $this->credit->getRepaymentSchedule();
+        $params = new CreditParams(new \DateTime('2019-10-31 00:00:00'), 100000000, 990, 12, CreditParams::DURATION_MONTH);
+        $actualRepayments = $this->credit->getRepaymentSchedule($params, []);
 
         $expectedRepayments = [
             ['date' => '31.10.2019', 'payment' => 0,       'percents' => 0,      'body' => 0,       'balance' => 100000000],

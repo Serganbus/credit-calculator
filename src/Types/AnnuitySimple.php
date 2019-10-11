@@ -1,6 +1,11 @@
 <?php
 
-namespace Credits;
+namespace Credits\Types;
+
+use Credits\CreditParams;
+use Credits\RepaymentParams;
+use Credits\RepaymentSchedule;
+use Credits\UnexpectedPayment;
 
 /**
  * Расчет графика платежей при аннуитетных платежах.
@@ -9,15 +14,15 @@ namespace Credits;
  *
  * @author Sergey Ivanov <sivanovkz@gmail.com>
  */
-class TypeAnnuity extends AbstractCreditType
+class AnnuitySimple implements Calculatable
 {
-    public function getRepaymentSchedule(): RepaymentSchedule
+    public function getRepaymentSchedule(CreditParams $params, array $unexpectedPayments): RepaymentSchedule
     {
-        $initialDate = $this->creditParams->getInitialDate();
-        $requestedSum = $this->creditParams->getRequestedSum();
-        $percents = $this->creditParams->getPercents();
-        $repaymentsCount = $this->creditParams->getRepaymentPeriodsCount();
-        $durationType = $this->creditParams->getDurationType();
+        $initialDate = $params->getInitialDate();
+        $requestedSum = $params->getRequestedSum();
+        $percents = $params->getPercents();
+        $repaymentsCount = $params->getRepaymentPeriodsCount();
+        $durationType = $params->getDurationType();
 
         $schedule = [
             new RepaymentParams($initialDate, 0, 0, 0, $requestedSum)
@@ -29,7 +34,7 @@ class TypeAnnuity extends AbstractCreditType
         $previousRepaymentDate = clone $initialDate;
         $remainingAmount = $requestedSum;
         for($i = 1; $i <= $repaymentsCount; $i++) {
-            $currentRepaymentDate = $this->addDurationToDate($durationType, $i, $initialDate);
+            $currentRepaymentDate = \Credits\addDurationToDate($initialDate, $durationType, $i);
             $interval = $currentRepaymentDate->diff($previousRepaymentDate);
 
             // Выплачено процентов
@@ -37,7 +42,7 @@ class TypeAnnuity extends AbstractCreditType
 
             // Платежи досрочного погашения, которые есть в периоде
             $prevUnexpectedRepaymentDate = clone $previousRepaymentDate;
-            $unexpectedPayments = $this->getUnexpectedPaymentsBetweenDates($currentRepaymentDate, $previousRepaymentDate);
+            $unexpectedPayments = \Credits\getUnexpectedPaymentsBetweenDates($currentRepaymentDate, $previousRepaymentDate, $unexpectedPayments);
             foreach ($unexpectedPayments as $unexpectedPayment) {
                 $recalcType = $unexpectedPayment->getType();
                 $unexpectedPaymentDate = $unexpectedPayment->getDate();
@@ -76,7 +81,7 @@ class TypeAnnuity extends AbstractCreditType
             $schedule[] = new RepaymentParams($currentRepaymentDate, $currentRepayment, $percentsRepayed, $bodyRepayed, $remainingAmount);
         }
 
-        return new RepaymentSchedule($schedule, $this->creditParams);
+        return new RepaymentSchedule($schedule, $params);
     }
 
     private function calcPaymentAmount(int $creditAmount, int $percents, int $repaymentsCount, int $fullPeriodsCount)

@@ -3,6 +3,9 @@
 namespace Credits;
 
 use InvalidArgumentException;
+use Credits\Types\AnnuitySimple;
+use Credits\Types\DifferentialSimple;
+use Credits\Types\Calculatable;
 
 /**
  * Конфигурирование кредитного калькулятора
@@ -29,11 +32,16 @@ class Calculator
     {
         if (is_null($config)) {
             $config = [
-                self::TYPE_ANNUITY => TypeAnnuity::class,
-                self::TYPE_DIFFERENTIAL => TypeDifferential::class,
+                self::TYPE_ANNUITY => new AnnuitySimple(),
+                self::TYPE_DIFFERENTIAL => new DifferentialSimple(),
             ];
         }
 
+        foreach ($config as $concreteCalculator) {
+            if (!$concreteCalculator instanceof Calculatable) {
+                throw new InvalidArgumentException("Elements of array should implement Calculatable interface");
+            }
+        }
         $this->config = $config;
     }
 
@@ -41,24 +49,19 @@ class Calculator
      * Расчет графика погашения кредита по заданным параметрам
      *
      * @param CreditParams $creditParams Параметры кредита
+     * @param array $unexpectedPayments Массив досрочных погашений
      * @param int $repaymentType Тип графика погашения, который необходимо рассчитать
      * @return RepaymentSchedule
      * @throws InvalidArgumentException
      */
-    public function calculate(CreditParams $creditParams, int $repaymentType = self::TYPE_ANNUITY): RepaymentSchedule
+    public function calculate(CreditParams $creditParams, array $unexpectedPayments = [], int $repaymentType = self::TYPE_ANNUITY): RepaymentSchedule
     {
-        foreach ($this->config as $configRepaymentType => $calculatorClass) {
+        foreach ($this->config as $configRepaymentType => $concreteCalculator) {
             if ($repaymentType !== $configRepaymentType) {
                 continue;
             }
 
-            try {
-                $concreteCreditCalculator = new $calculatorClass($creditParams);
-            } catch (\Throwable $ex) {
-                throw new \LogicException('Calculator for requested repayment type not found', 0, $ex);
-            }
-            
-            return $concreteCreditCalculator->getRepaymentSchedule();
+            return $concreteCalculator->getRepaymentSchedule($creditParams, $unexpectedPayments);
         }
 
         throw new InvalidArgumentException("Calculator for credit type '{$repaymentType}' not found");

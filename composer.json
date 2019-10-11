@@ -12,7 +12,10 @@
     "autoload": {
         "psr-4": {
             "Credits\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "require": {},
     "require-dev": {
