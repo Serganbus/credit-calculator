@@ -27,6 +27,7 @@ class Calculator
 
     /**
      * @param array $config Массив с конфигурацией кредитного калькулятора
+     * @throws InvalidArgumentException
      */
     public function __construct(array $config = null)
     {
