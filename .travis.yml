@@ -4,4 +4,4 @@ php:
   - '7.3'
 
 install: composer install
-script: phpunit --configuration tests/phpunit.xml --coverage-text
+script: phpunit --configuration tests/phpunit.xml --coverage-clover=coverage.xml
