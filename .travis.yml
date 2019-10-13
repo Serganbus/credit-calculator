@@ -4,3 +4,5 @@ php:
   - '7.2'
   - '7.3'
   - nightly
+  
+script: phpunit --configuration tests/phpunit.xml --coverage-text
