@@ -79,3 +79,15 @@ function getUnexpectedPaymentsBetweenDates(DateTime $currentDate, DateTime $prev
 
     return $payments;
 }
+
+/**
+ * Форматируем денежную сумму, выраженную в копейках
+ * в красивый вид, например 1500000(15 тысяч) -> 15 000.00
+ * 
+ * @param int $number Число, которое нуждается форматировании
+ * @return string
+ */
+function prettifyNumber(int $number)
+{
+    return number_format($number / 100, 2, '.', ' ');
+}
