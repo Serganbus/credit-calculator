@@ -25,7 +25,7 @@ class AnnuitySimple implements Calculatable
         $durationType = $params->getDurationType();
 
         $schedule = [
-            new RepaymentParams($initialDate, 0, 0, 0, $requestedSum)
+            new RepaymentParams($initialDate, 0, 0, $requestedSum)
         ];
 
         $fullPeriodsCount = floor(365 / CreditParams::$daysInPaymentPeriod[$durationType]);
@@ -37,13 +37,19 @@ class AnnuitySimple implements Calculatable
             $currentRepaymentDate = \Credits\addDurationToDate($initialDate, $durationType, $i);
             $interval = $currentRepaymentDate->diff($previousRepaymentDate);
 
+            // Комиссия
+            $comission = $params->getPeriodicComission();
+            if ($i === 1) {
+                $comission += $params->getOneTimeComission();
+            }
+
             // Выплачено процентов
             $percentsRepayed = round($remainingAmount * $percents / ($fullPeriodsCount * 10000));
 
             // Платежи досрочного погашения, которые есть в периоде
             $prevUnexpectedRepaymentDate = clone $previousRepaymentDate;
-            $unexpectedPayments = \Credits\getUnexpectedPaymentsBetweenDates($currentRepaymentDate, $previousRepaymentDate, $unexpectedPayments);
-            foreach ($unexpectedPayments as $unexpectedPayment) {
+            $unexpectedPaymentsInPeriod = \Credits\getUnexpectedPaymentsBetweenDates($previousRepaymentDate, $currentRepaymentDate, $unexpectedPayments);
+            foreach ($unexpectedPaymentsInPeriod as $unexpectedPayment) {
                 $recalcType = $unexpectedPayment->getType();
                 $unexpectedPaymentDate = $unexpectedPayment->getDate();
                 $unexpectedAmount = $unexpectedPayment->getAmount();
@@ -57,11 +63,11 @@ class AnnuitySimple implements Calculatable
                 if ($recalcType === UnexpectedPayment::LESS_LOAN_PERIOD) {
                     $percentsInPeriod = $percents / ($fullPeriodsCount * 10000);
                     $log = $percentsInPeriod / ($repaymentRounded / $remainingAmount - $percentsInPeriod) + 1;
-                    $newRepaymentsCount = (int)round(log($log, 1 + $percentsInPeriod));
+                    $newRepaymentsCount = (int)round(log($log, 1 + $percentsInPeriod) + 0.5);
                     $repaymentsCount = $i + $newRepaymentsCount - 1;
                 }
 
-                $schedule[] = new RepaymentParams($unexpectedPaymentDate, $unexpectedAmount, 0, $unexpectedAmount, $remainingAmount);
+                $schedule[] = new RepaymentParams($unexpectedPaymentDate, 0, $unexpectedAmount, $remainingAmount);
 
                 $prevUnexpectedRepaymentDate = $unexpectedPaymentDate;
             }
@@ -78,7 +84,7 @@ class AnnuitySimple implements Calculatable
             $previousRepaymentDate = $currentRepaymentDate;
             $remainingAmount -= $bodyRepayed;
 
-            $schedule[] = new RepaymentParams($currentRepaymentDate, $currentRepayment, $percentsRepayed, $bodyRepayed, $remainingAmount);
+            $schedule[] = new RepaymentParams($currentRepaymentDate, $percentsRepayed, $bodyRepayed, $remainingAmount, $comission);
         }
 
         return new RepaymentSchedule($schedule, $params);

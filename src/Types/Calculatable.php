@@ -7,7 +7,7 @@ use Credits\RepaymentSchedule;
 
 /**
  *
- * @author Sergey Ivanov <ivanov@tochka.com>
+ * @author Sergey Ivanov <sivanovkz@gmail.com>
  */
 interface Calculatable
 {

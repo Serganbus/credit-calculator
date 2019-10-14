@@ -18,7 +18,7 @@ class RepaymentParamsTest extends TestCase
 
     public function setUp(): void
     {
-        $this->params = new RepaymentParams(new \DateTime('2019-10-31 00:00:00'), 0, 1, 2, 100000000);
+        $this->params = new RepaymentParams(new \DateTime('2019-10-31 00:00:00'), 1, 2, 100000000);
     }
 
     public function testGetDate()
@@ -31,7 +31,7 @@ class RepaymentParamsTest extends TestCase
 
     public function testGetPayment()
     {
-        $this->assertEquals(0, $this->params->getPayment());
+        $this->assertEquals(3, $this->params->getPayment());
     }
 
     public function testGetPercents()

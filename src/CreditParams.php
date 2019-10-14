@@ -48,6 +48,16 @@ class CreditParams
      */
     protected $percents;
 
+    /**
+     * @var int Единовременная комиссия(в сотых долях)
+     */
+    protected $oneTimeComission = 0;
+
+    /**
+     * @var int Периодическая комиссия(в сотых долях)
+     */
+    protected $periodicComission = 0;
+
     public function __construct(DateTime $initialDate, int $requestedSum, int $percents, int $repaymentPeriodsCount, int $durationType)
     {
         if (!in_array($durationType, array_keys(static::$daysInPaymentPeriod))) {
@@ -59,6 +69,50 @@ class CreditParams
         $this->requestedSum = $requestedSum;
         $this->percents = $percents;
         $this->durationType = $durationType;
+    }
+
+    /**
+     * Установка единовременной комиссии по кредиту
+     *
+     * @param int $comission
+     * @return CreditParams
+     */
+    public function setOneTimeComission(int $comission): CreditParams
+    {
+        $this->oneTimeComission = $comission;
+        return $this;
+    }
+
+    /**
+     * Вернуть сумму разовой комиссии
+     *
+     * @return int
+     */
+    public function getOneTimeComission(): int
+    {
+        return $this->oneTimeComission;
+    }
+
+    /**
+     * Установка периодической комиссии по кредиту
+     *
+     * @param int $comission
+     * @return CreditParams
+     */
+    public function setPeriodicComission(int $comission): CreditParams
+    {
+        $this->periodicComission = $comission;
+        return $this;
+    }
+
+    /**
+     * Вернуть сумму периодической комиссии
+     *
+     * @return int
+     */
+    public function getPeriodicComission(): int
+    {
+        return $this->periodicComission;
     }
 
     /**

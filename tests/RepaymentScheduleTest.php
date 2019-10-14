@@ -37,7 +37,7 @@ class RepaymentScheduleTest extends TestCase
         $repaymentParams = [];
         foreach ($repayments as $repayment) {
             $date = \DateTime::createFromFormat('d.m.Y', $repayment['date']);
-            $repaymentParams[] = new RepaymentParams($date, $repayment['payment'], $repayment['percents'], $repayment['body'], $repayment['balance']);
+            $repaymentParams[] = new RepaymentParams($date, $repayment['percents'], $repayment['body'], $repayment['balance']);
         }
 
         $params = new CreditParams(new \DateTime('2019-10-31 00:00:00'), 100000000, 990, 12, CreditParams::DURATION_MONTH);

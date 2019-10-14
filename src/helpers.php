@@ -44,26 +44,28 @@ function addDurationToDate(DateTime $initial, int $durationType, int $repaymentN
 }
 
 /**
- * Получить массив с частичными погашениями кредита между двумя датами
+ * Получить массив с частичными погашениями кредита между двумя датами,
+ * при этом время не учитывается. Если имеется несколько платежей на одну дату,
+ * то платежи сортируются по времени в порядке его увеличения.
  *
  * @param DateTime $currentDate
  * @param DateTime $previousDate
  * @return array<UnexpectedPayment>
  * @throws \InvalidArgumentException
  */
-function getUnexpectedPaymentsBetweenDates(DateTime $currentDate, DateTime $previousDate, array $unexpectedPayments): array
+function getUnexpectedPaymentsBetweenDates(DateTime $currentDate, DateTime $nextDate, array $unexpectedPayments): array
 {
     $payments = [];
 
-    $prevDateStr = $previousDate->format('Y-m-d');
     $currDateStr = $currentDate->format('Y-m-d');
+    $nextDateStr = $nextDate->format('Y-m-d');
     foreach ($unexpectedPayments as $unexpectedPayment) {
         if (!($unexpectedPayment instanceof UnexpectedPayment)) {
             throw new \InvalidArgumentException('Array shuld contain instances of UnexpectedPayment');
         }
         $paymentDateStr = $unexpectedPayment->getDate()->format('Y-m-d');
-        if ($paymentDateStr >= $prevDateStr
-            && $paymentDateStr < $currDateStr) {
+        if ($paymentDateStr >= $currDateStr
+            && $paymentDateStr < $nextDateStr) {
             $payments[] = $unexpectedPayment;
         }
     }
