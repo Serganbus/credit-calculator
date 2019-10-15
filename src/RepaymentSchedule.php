@@ -114,9 +114,9 @@ class RepaymentSchedule implements \Iterator, \Countable
     /**
      * Вернуть полную стоимость кредита
      *
-     * @return int
+     * @return string
      */
-    public function calculateTotalCost(): int
+    public function calculateTotalCost(): string
     {
         if (!is_null($this->creditTotalCost)) {
             return $this->creditTotalCost;
@@ -165,7 +165,7 @@ class RepaymentSchedule implements \Iterator, \Countable
             $i = $i - $s;
         }
 
-        $this->creditTotalCost = (int)($i * $basePeriodsCount * 10000);
+        $this->creditTotalCost = number_format($i * $basePeriodsCount * 100, 3, '.', '');
 
         return $this->creditTotalCost;
     }

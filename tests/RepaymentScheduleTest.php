@@ -111,7 +111,7 @@ class RepaymentScheduleTest extends TestCase
 
     public function testCalculateTotalCost()
     {
-        $this->assertEquals(989, $this->schedule->calculateTotalCost());
+        $this->assertEquals('9.895', $this->schedule->calculateTotalCost());
     }
 
     public function testCalculateTotalPayments()

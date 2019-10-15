@@ -2,6 +2,14 @@
     "name": "serganbus/credit-calculator",
     "description": "Калькулятор для расчета графика погашения кредита, используя аннуитетный/дифференцированный методы погашения. Можно указать частичное досрочное погашение, а также учесть едииноразовую/периодическую комиссии. Пакет легко расширяем собственными алгоритмами расчета графика погашений.",
     "type": "library",
+    "keywords": [
+        "credit",
+        "calculator",
+        "loan",
+        "annuity payment",
+        "differential payment",
+        "repayment schedule"
+    ],
     "license": "MIT",
     "authors": [
         {
